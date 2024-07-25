@@ -18,6 +18,10 @@
         align-items: center;
         justify-content: center;
         gap: 20px;
+
+        .fileInput{
+          display: none;
+        }
   
         input {
           padding: 20px;

@@ -1,18 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 import "./chat.css";
 
 const Chat = () => {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
+  const endRef = useRef(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  });
 
   const handleEmoji = (e) => {
-    console.log(e.emoji, text);
+    // console.log(e.emoji, text);
     setText((prev) => prev + e.emoji);
-    console.log(text);
+    // console.log(text);
   };
 
-  console.log(text);
+  // console.log(text);
   return (
     <div className="chat">
       <div className="top">
@@ -29,7 +34,59 @@ const Chat = () => {
           <img src="./info.png" alt="" />
         </div>
       </div>
-      <div className="center"></div>
+
+      {/* ........................Center................................. */}
+      <div className="center">
+        <div className="message own">
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <p>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Perferendis unde deserunt optio inventore impedit exercitationem
+              similique quod tenetur.
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+
+        <div className="message ">
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <p>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Perferendis unde deserunt optio inventore impedit exercitationem
+              similique quod tenetur.
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className="message own">
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <p>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Perferendis unde deserunt optio inventore impedit exercitationem
+              similique quod tenetur.
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div className="message ">
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <img src="./avatar.png" alt="" />
+            <p>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Perferendis unde deserunt optio inventore impedit exercitationem
+              similique quod tenetur.
+            </p>
+            <span>1 min ago</span>
+          </div>
+        </div>
+        <div ref={endRef}></div>
+      </div>
+
+      {/* ................Bottom........................................ */}
       <div className="bottom">
         <div className="icons">
           <img src="./img.png" alt="" />
@@ -48,7 +105,9 @@ const Chat = () => {
             alt=""
             onClick={() => setOpen((prev) => !prev)}
           />
-          <EmojiPicker open={open} onEmojiClick={handleEmoji} />
+          <div className="picker">
+            <EmojiPicker open={open} onEmojiClick={handleEmoji} />
+          </div>
         </div>
         <button className="sendButton">Send</button>
       </div>
