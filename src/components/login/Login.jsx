@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-// import "./login.css";
-// import { toast } from "react-toastify";
+import "./login.css";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [avatar, setAvatar] = useState({
