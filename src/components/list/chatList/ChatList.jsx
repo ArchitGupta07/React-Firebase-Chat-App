@@ -1,8 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./chatList.css";
+import AddUser from "./addUser/addUser";
+import { doc, onSnapshot } from "firebase/firestore";
+import { useUserStore } from "../../../lib/userStore";
 
 const ChatList = () => {
+  const [chats, setChats] = useState([]);
   const [addMode, setAddMode] = useState(false);
+
+  const { currenUser } = useUserStore();
+
+  useEffect(() => {
+    const unSub = onSnapshot(doc(db, "userchats", currenUser.id), (doc) => {
+      setChats(doc.data());
+    });
+
+    return () => {
+      unSub();
+    };
+  }, [currenUser.id]);
   return (
     <div className="chatList">
       <div className="search">
@@ -17,41 +33,18 @@ const ChatList = () => {
           onClick={() => setAddMode((prev) => !prev)}
         />
       </div>
-      <div className="item">
-        <img src="./avatar.png" alt="" />
-        <div className="texts">
-          <span>Archit Gupta</span>
-          <p>hello</p>
+
+      {chats.map((chat) => (
+        <div className="item" key={chat.chatId}>
+          <img src="./avatar.png" alt="" />
+          <div className="texts">
+            <span>Archit Gupta</span>
+            <p>{chat.lastMessage}</p>
+          </div>
         </div>
-      </div>
-      <div className="item">
-        <img src="./avatar.png" alt="" />
-        <div className="texts">
-          <span>Archit Gupta</span>
-          <p>hello</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="./avatar.png" alt="" />
-        <div className="texts">
-          <span>Archit Gupta</span>
-          <p>hello</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="./avatar.png" alt="" />
-        <div className="texts">
-          <span>Archit Gupta</span>
-          <p>hello</p>
-        </div>
-      </div>
-      <div className="item">
-        <img src="./avatar.png" alt="" />
-        <div className="texts">
-          <span>Archit Gupta</span>
-          <p>hello</p>
-        </div>
-      </div>
+      ))}
+
+      {addMode && <AddUser />}
     </div>
   );
 };
