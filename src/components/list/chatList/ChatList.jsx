@@ -1,24 +1,44 @@
 import React, { useEffect, useState } from "react";
 import "./chatList.css";
 import AddUser from "./addUser/addUser";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useUserStore } from "../../../lib/userStore";
+import { db } from "../../../lib/firebase";
 
 const ChatList = () => {
   const [chats, setChats] = useState([]);
   const [addMode, setAddMode] = useState(false);
 
-  const { currenUser } = useUserStore();
+  const { currentUser } = useUserStore();
 
   useEffect(() => {
-    const unSub = onSnapshot(doc(db, "userchats", currenUser.id), (doc) => {
-      setChats(doc.data());
-    });
+    const unSub = onSnapshot(
+      doc(db, "userchats", currentUser.id),
+      async (res) => {
+        if (!res.exists()) return;
+        const items = res.data().chats;
+
+        console.log(items, "items");
+
+        const promisses = items.map(async (item) => {
+          const userDocRef = doc(db, "users", item.recieverId);
+          const userDocSnap = await getDoc(userDocRef);
+
+          const user = userDocSnap.data();
+
+          return { ...item, user };
+        });
+        const chatData = await Promise.all(promisses);
+        setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+      }
+    );
 
     return () => {
       unSub();
     };
-  }, [currenUser.id]);
+  }, [currentUser.id]);
+
+  console.log(chats);
   return (
     <div className="chatList">
       <div className="search">
@@ -36,9 +56,9 @@ const ChatList = () => {
 
       {chats.map((chat) => (
         <div className="item" key={chat.chatId}>
-          <img src="./avatar.png" alt="" />
+          <img src={chat.user.avatar || "./avatar.png"} alt="" />
           <div className="texts">
-            <span>Archit Gupta</span>
+            <span>{chat.user.username}</span>
             <p>{chat.lastMessage}</p>
           </div>
         </div>
